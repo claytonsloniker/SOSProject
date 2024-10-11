@@ -9,31 +9,43 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 2rem 0; /* Add padding instead of height */
 }
 
 .player-select {
   margin-bottom: 1rem;
 }
 
+.board-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px; /* Line thickness around boxes */
-  border: 2px solid #1d87c0; /* Boarder color around game board */
   background-color: #1d87c0; /* Line color around boxes */
 }
 
 .cell {
-  width: 60px;
-  height: 60px;
-  background-color: #fff; /* Color of the cells */
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .cell input[type="checkbox"] {
   width: 100%;
   height: 100%;
   margin: 0;
+}
+
+/* Add specific styles for radio buttons */
+input[type="radio"] {
+  margin: 0 0.5rem;
+  appearance: auto; /* Ensure default appearance */
 }

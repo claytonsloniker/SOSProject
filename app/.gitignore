@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# IntelliJ IDEA specific files
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# Specific configuration files
+jarRepositories.xml
+encodings.xml
+compiler.xml
