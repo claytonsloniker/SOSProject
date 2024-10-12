@@ -3,6 +3,9 @@ package com.sos.game;
 public class SimpleGameMode implements GameMode {
     @Override
     public boolean checkWin(String[][] board, String currentPlayer) {
+
+        // Note: Ignore this code for now, will update in next sprint
+
         int size = board.length;
         boolean win;
 

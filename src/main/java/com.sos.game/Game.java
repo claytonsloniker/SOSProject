@@ -51,7 +51,7 @@ public class Game {
         if (board[row][col] == null && gameStatus.equals("ONGOING")) {
             board[row][col] = letter; // Set the chosen letter
             if (gameMode.checkWin(board, currentPlayer)) {
-                gameStatus = "WON";
+                gameStatus = "WON"; // Note: Ignore this code for now, will update in next sprint
             } else if (isBoardFull()) {
                 gameStatus = "DRAW";
             } else {

@@ -53,7 +53,9 @@ const GameBoard = () => {
     };
 
     const handleInputChange = (event) => {
-        setInputSize(event.target.value);
+        const value = event.target.value;
+        const size = Math.max(3, Math.min(8, Number(value)));
+        setInputSize(size);
     };
 
     const handleGameModeChange = (event) => {
@@ -86,7 +88,7 @@ const GameBoard = () => {
                         value={inputSize}
                         onChange={handleInputChange}
                         min="3"
-                        max="10"
+                        max="8"
                     />
                 </label>
             </div>
