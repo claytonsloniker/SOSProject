@@ -20,7 +20,7 @@ public class GameController {
     }
 
     @GetMapping("/board")
-    public String[] getBoard() {
+    public String[][] getBoard() {
         return gameService.getBoard();
     }
 
@@ -30,7 +30,7 @@ public class GameController {
     }
 
     @PostMapping("/move")
-    public void makeMove(@RequestParam int index, @RequestParam String gameMode) {
-        gameService.makeMove(index, gameMode);
+    public void makeMove(@RequestParam int row, @RequestParam int col, @RequestParam String letter) {
+        gameService.makeMove(row, col, letter);
     }
 }

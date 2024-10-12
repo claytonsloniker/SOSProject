@@ -1,14 +1,16 @@
 package com.sos.game;
 
 public class Game {
-    private String[] board;
-    private String currentPlayer;
+    private static final int MAX_SIZE = 10;
+    private static final int MIN_SIZE = 3;
+    private String[][] board;
+    private String currentPlayer; // "GREEN" or "RED"
     private String gameStatus; // "ONGOING", "WON", "DRAW"
     private GameMode gameMode;
 
     public Game(int size, String gameMode) {
-        this.board = new String[size * size]; // Initialize a size x size board
-        this.currentPlayer = "S"; // Player 'S' starts the game
+        this.board = new String[size][size]; // Initialize a size x size board
+        this.currentPlayer = "GREEN"; // Green player starts the game
         this.gameStatus = "ONGOING";
         setGameMode(gameMode);
     }
@@ -21,7 +23,7 @@ public class Game {
         }
     }
 
-    public String[] getBoard() {
+    public String[][] getBoard() {
         return board;
     }
 
@@ -29,35 +31,49 @@ public class Game {
         return currentPlayer;
     }
 
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
     public String getGameStatus() {
         return gameStatus;
     }
 
-    public void makeMove(int index, String gameMode) {
-        if (board[index] == null && gameStatus.equals("ONGOING")) {
-            board[index] = currentPlayer; // Set the current player's move
-            if (this.gameMode.checkWin(board, currentPlayer)) {
+    public static int getMaxSize() {
+        return MAX_SIZE;
+    }
+
+    public static int getMinSize() {
+        return MIN_SIZE;
+    }
+
+    public void makeMove(int row, int col, String letter) {
+        if (board[row][col] == null && gameStatus.equals("ONGOING")) {
+            board[row][col] = letter; // Set the chosen letter
+            if (gameMode.checkWin(board, currentPlayer)) {
                 gameStatus = "WON";
             } else if (isBoardFull()) {
                 gameStatus = "DRAW";
             } else {
-                currentPlayer = currentPlayer.equals("S") ? "O" : "S"; // Switch player
+                currentPlayer = currentPlayer.equals("GREEN") ? "RED" : "GREEN"; // Switch player
             }
         }
     }
 
     private boolean isBoardFull() {
-        for (String cell : board) {
-            if (cell == null) {
-                return false;
+        for (String[] row : board) {
+            for (String cell : row) {
+                if (cell == null) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     public void resetGame(int size) {
-        this.board = new String[size * size];
-        this.currentPlayer = "S";
+        this.board = new String[size][size];
+        this.currentPlayer = "GREEN";
         this.gameStatus = "ONGOING";
     }
 }

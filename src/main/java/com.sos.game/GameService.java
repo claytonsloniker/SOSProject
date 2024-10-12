@@ -7,10 +7,13 @@ public class GameService {
     private Game game;
 
     public void createGame(int size, String gameMode) {
+        if (size < Game.getMinSize() || size > Game.getMaxSize()) {
+            throw new IllegalArgumentException("Board size must be between " + Game.getMinSize() + " and " + Game.getMaxSize());
+        }
         game = new Game(size, gameMode);
     }
 
-    public String[] getBoard() {
+    public String[][] getBoard() {
         return game.getBoard();
     }
 
@@ -18,7 +21,7 @@ public class GameService {
         return game.getCurrentPlayer();
     }
 
-    public void makeMove(int index, String gameMode) {
-        game.makeMove(index, gameMode);
+    public void makeMove(int row, int col, String letter) {
+        game.makeMove(row, col, letter);
     }
 }
