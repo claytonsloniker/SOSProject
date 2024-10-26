@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import Modal from 'react-modal';
 import '../styles/App.css';
+
+Modal.setAppElement('#root'); // Bind modal to root element
 
 const GameBoard = () => {
     const [board, setBoard] = useState([]);
@@ -11,6 +14,7 @@ const GameBoard = () => {
     const [selectedLetter, setSelectedLetter] = useState('S'); // Default letter
     const [gameStatus, setGameStatus] = useState('ONGOING'); // Game status
     const [sosSequences, setSosSequences] = useState([]); // Used to hold all the sos seq
+    const [showModal, setShowModal] = useState(false); // State to control modal visibility
     const boardRef = useRef(null);
 
     useEffect(() => {
@@ -20,7 +24,10 @@ const GameBoard = () => {
 
     useEffect(() => {
         drawLines(sosSequences);
-    }, [sosSequences]); // Draw the lines when sosSequences change
+        if (gameStatus === 'WON' || gameStatus === 'DRAW') {
+            setShowModal(true);
+        }
+    }, [sosSequences, gameStatus]); // Draw the lines when sosSequences change
 
     const createGame = async (size, gameMode) => {
         try {
@@ -116,6 +123,8 @@ const GameBoard = () => {
         const newSize = parseInt(inputSize, 10);
         setSize(newSize);
         setSosSequences([]); // Clear the sosSequences state
+        setGameStatus('ONGOING'); // Reset game status
+        setShowModal(false); // Ensure modal is hidden
         const canvas = document.getElementById('sosCanvas');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
@@ -124,6 +133,10 @@ const GameBoard = () => {
 
     const getPlayerColor = (player) => {
         return player === 'RED' ? 'red' : 'green';
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
     };
 
     return (
@@ -167,7 +180,6 @@ const GameBoard = () => {
                         Current Player: <span
                         style={{color: getPlayerColor(currentPlayer)}}>{currentPlayer || 'Loading...'}</span>
                     </h2>
-                    <h2>Game Status: <span>{gameStatus || 'Loading...'}</span></h2>
                     <div className="board" ref={boardRef} style={{gridTemplateColumns: `repeat(${size}, 50px)`}}>
                         {board.map((row, rowIndex) => (
                             row.map((cell, colIndex) => (
@@ -205,6 +217,26 @@ const GameBoard = () => {
                     <button onClick={handleStartGame}>New Game</button>
                 </div>
             </div>
+            <Modal
+                isOpen={showModal}
+                onRequestClose={closeModal}
+                contentLabel="Game Status Modal"
+                className="modal"
+                overlayClassName="modal-overlay"
+            >
+                {gameStatus === 'WON' ? (
+                    <>
+                        <h2>Player <span style={{color: getPlayerColor(currentPlayer)}}>{currentPlayer}</span> has won!</h2>
+                        <button className="modal-button play-again-button" onClick={handleStartGame}>Play Again</button>
+                    </>
+                ) : gameStatus === 'DRAW' ? (
+                    <>
+                        <h2>Draw Game!</h2>
+                        <button className="modal-button play-again-button" onClick={handleStartGame}>Play Again</button>
+                    </>
+                ) : null}
+                <button className="modal-button" onClick={closeModal}>Close</button>
+            </Modal>
         </div>
     );
 };

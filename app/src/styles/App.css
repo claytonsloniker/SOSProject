@@ -109,3 +109,34 @@ input[type="radio"] {
   margin: 0 0.5rem;
   appearance: auto;
 }
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background-color: rgba(136, 136, 136, 0.9);
+  padding: 20px;
+  border-radius: 4px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+.modal-button {
+  margin: 0 10px;
+}
+
+.play-again-button {
+  background-color: green;
+  color: white;
+}
