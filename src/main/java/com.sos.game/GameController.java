@@ -2,6 +2,7 @@ package com.sos.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/game")
@@ -37,5 +38,10 @@ public class GameController {
     @GetMapping("/status")
     public String getGameStatus() {
         return gameService.getGameStatus();
+    }
+
+    @GetMapping("/sos-sequences")
+    public List<SosSequence> getSosSequences() {
+        return gameService.getSosSequences();
     }
 }

@@ -1,20 +1,30 @@
 package com.sos.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface GameMode {
+    // All possible directions to check for SOS sequences.
+    // Note: first value is the row change and the second value is the column change
     int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
-    boolean checkWin(String[][] board, String currentPlayer, int row, int col, String letter);
+    boolean checkWin(String[][] board, String currentPlayer, int row, int col, String letter); // Gets overridden
 
-    default boolean checkAdjacent(String[][] board, String currentPlayer, int row, int col, String letter) {
+    default List<SosSequence> findSosSequences(String[][] board, int row, int col) {
+        List<SosSequence> sequences = new ArrayList<>(); // Stores all the SOS sequences
         for (int[] direction : directions) {
             if (isSOS(board, row, col, direction)) {
-                return true;
+                // If an SOS sequence is found, add it to the list of sequences
+                int endRow = row + 2 * direction[0];
+                int endCol = col + 2 * direction[1];
+                sequences.add(new SosSequence(row, col, endRow, endCol));
             }
         }
-        return false;
+        return sequences;
     }
 
     private boolean isValid(String[][] board, int row, int col) {
+        // Check if the row and column are within the bounds of the board
         return row >= 0 && row < board.length && col >= 0 && col < board[0].length;
     }
 

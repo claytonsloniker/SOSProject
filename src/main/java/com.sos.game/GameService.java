@@ -2,6 +2,8 @@ package com.sos.game;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GameService {
     private Game game;
@@ -27,5 +29,8 @@ public class GameService {
 
     public String getGameStatus() {
         return game.getGameStatus();
+    }
+    public List<SosSequence> getSosSequences() {
+        return game.getSosSequences();
     }
 }

@@ -40,6 +40,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .radio-label-button {

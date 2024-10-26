@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import '../styles/App.css';
 
@@ -10,11 +10,17 @@ const GameBoard = () => {
     const [gameMode, setGameMode] = useState('simple'); // Default game mode
     const [selectedLetter, setSelectedLetter] = useState('S'); // Default letter
     const [gameStatus, setGameStatus] = useState('ONGOING'); // Game status
+    const [sosSequences, setSosSequences] = useState([]); // Used to hold all the sos seq
+    const boardRef = useRef(null);
 
     useEffect(() => {
         createGame(size, gameMode);
         fetchGameStatus();
     }, []);
+
+    useEffect(() => {
+        drawLines(sosSequences);
+    }, [sosSequences]); // Draw the lines when sosSequences change
 
     const createGame = async (size, gameMode) => {
         try {
@@ -54,15 +60,42 @@ const GameBoard = () => {
         }
     };
 
+    const fetchSosSequences = async () => {
+        try {
+            const response = await axios.get('/api/game/sos-sequences');
+            setSosSequences(response.data.map(seq => ({
+                ...seq,
+                color: getPlayerColor(currentPlayer)
+            })));
+        } catch (error) {
+            console.error('Error fetching SOS sequences:', error);
+        }
+    };
+
     const makeMove = async (row, col) => {
         try {
             await axios.post('/api/game/move', null, { params: { row, col, letter: selectedLetter } });
             await fetchBoard();
             await fetchCurrentPlayer();
             await fetchGameStatus();
+            await fetchSosSequences();
         } catch (error) {
             console.error('Error making move:', error);
         }
+    };
+
+    const drawLines = (sequences) => {
+        const canvas = document.getElementById('sosCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous lines
+        sequences.forEach(seq => {
+            ctx.strokeStyle = seq.color; // Set the color of the line to the current player's color
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(seq.startCol * 50 + 25, seq.startRow * 50 + 25); // Start from the center of the cell
+            ctx.lineTo(seq.endCol * 50 + 25, seq.endRow * 50 + 25); // End at the center of the cell
+            ctx.stroke();
+        });
     };
 
     const handleInputChange = (event) => {
@@ -82,6 +115,10 @@ const GameBoard = () => {
     const handleStartGame = () => {
         const newSize = parseInt(inputSize, 10);
         setSize(newSize);
+        setSosSequences([]); // Clear the sosSequences state
+        const canvas = document.getElementById('sosCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
         createGame(newSize, gameMode);
     };
 
@@ -124,26 +161,29 @@ const GameBoard = () => {
                     General Game
                 </label>
             </div>
-            <div className="board-wrapper">
+            <div className="board-wrapper" style={{ position: 'relative' }}>
                 <div className="board-container">
                     <h2 className="current-player">
                         Current Player: <span
                         style={{color: getPlayerColor(currentPlayer)}}>{currentPlayer || 'Loading...'}</span>
                     </h2>
                     <h2>Game Status: <span>{gameStatus || 'Loading...'}</span></h2>
-                    <div className="board" style={{gridTemplateColumns: `repeat(${size}, 50px)`}}>
+                    <div className="board" ref={boardRef} style={{gridTemplateColumns: `repeat(${size}, 50px)`}}>
                         {board.map((row, rowIndex) => (
                             row.map((cell, colIndex) => (
                                 <div
                                     key={`${rowIndex}-${colIndex}`}
                                     onClick={() => makeMove(rowIndex, colIndex)}
                                     className="cell"
+                                    style={{ width: '50px', height: '50px' }}
                                 >
                                     {cell}
                                 </div>
                             ))
                         ))}
                     </div>
+                    <canvas id="sosCanvas" width={size * 50} height={size * 50}
+                            style={{ position: 'absolute', top: boardRef.current?.offsetTop, left: boardRef.current?.offsetLeft, pointerEvents: 'none' }}></canvas>
                 </div>
             </div>
             <div className="letter-select-and-new-game">
