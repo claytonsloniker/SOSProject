@@ -9,9 +9,11 @@ const GameBoard = () => {
     const [inputSize, setInputSize] = useState(4); // Input field for board size set to 4
     const [gameMode, setGameMode] = useState('simple'); // Default game mode
     const [selectedLetter, setSelectedLetter] = useState('S'); // Default letter
+    const [gameStatus, setGameStatus] = useState('ONGOING'); // Game status
 
     useEffect(() => {
         createGame(size, gameMode);
+        fetchGameStatus();
     }, []);
 
     const createGame = async (size, gameMode) => {
@@ -19,6 +21,7 @@ const GameBoard = () => {
             await axios.post('/api/game/create', null, { params: { size, gameMode } });
             await fetchBoard();
             await fetchCurrentPlayer();
+            await fetchGameStatus();
         } catch (error) {
             console.error('Error creating game:', error);
         }
@@ -42,11 +45,21 @@ const GameBoard = () => {
         }
     };
 
+    const fetchGameStatus = async () => {
+        try {
+            const response = await axios.get('/api/game/status');
+            setGameStatus(response.data);
+        } catch (error) {
+            console.error('Error fetching game status:', error);
+        }
+    };
+
     const makeMove = async (row, col) => {
         try {
             await axios.post('/api/game/move', null, { params: { row, col, letter: selectedLetter } });
             await fetchBoard();
             await fetchCurrentPlayer();
+            await fetchGameStatus();
         } catch (error) {
             console.error('Error making move:', error);
         }
@@ -78,7 +91,6 @@ const GameBoard = () => {
 
     return (
         <div className="game">
-
             <div className="player-select">
                 <h1>SOS Game</h1>
                 <label>
@@ -118,6 +130,7 @@ const GameBoard = () => {
                         Current Player: <span
                         style={{color: getPlayerColor(currentPlayer)}}>{currentPlayer || 'Loading...'}</span>
                     </h2>
+                    <h2>Game Status: <span>{gameStatus || 'Loading...'}</span></h2>
                     <div className="board" style={{gridTemplateColumns: `repeat(${size}, 50px)`}}>
                         {board.map((row, rowIndex) => (
                             row.map((cell, colIndex) => (

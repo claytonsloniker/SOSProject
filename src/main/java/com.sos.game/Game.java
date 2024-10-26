@@ -50,8 +50,8 @@ public class Game {
     public void makeMove(int row, int col, String letter) {
         if (board[row][col] == null && gameStatus.equals("ONGOING")) {
             board[row][col] = letter; // Set the chosen letter
-            if (gameMode.checkWin(board, currentPlayer)) {
-                gameStatus = "WON"; // Note: Ignore this code for now, will update in next sprint
+            if (gameMode.checkWin(board, currentPlayer, row, col, letter)) {
+                gameStatus = "WON";
             } else if (isBoardFull()) {
                 gameStatus = "DRAW";
             } else {

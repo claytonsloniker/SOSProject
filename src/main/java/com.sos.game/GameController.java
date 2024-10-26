@@ -33,4 +33,9 @@ public class GameController {
     public void makeMove(@RequestParam int row, @RequestParam int col, @RequestParam String letter) {
         gameService.makeMove(row, col, letter);
     }
+
+    @GetMapping("/status")
+    public String getGameStatus() {
+        return gameService.getGameStatus();
+    }
 }

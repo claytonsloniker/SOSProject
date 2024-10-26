@@ -24,4 +24,8 @@ public class GameService {
     public void makeMove(int row, int col, String letter) {
         game.makeMove(row, col, letter);
     }
+
+    public String getGameStatus() {
+        return game.getGameStatus();
+    }
 }
