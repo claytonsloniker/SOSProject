@@ -10,13 +10,17 @@ public class Game {
     private String currentPlayer; // "GREEN" or "RED"
     private String gameStatus; // "ONGOING", "WON", "DRAW"
     private GameMode gameMode;
-    private List<SosSequence> sosSequences;
+    private final List<SosSequence> sosSequences;
+    private int greenPlayerScore;
+    private int redPlayerScore;
 
     public Game(int size, String gameMode) {
         this.board = new String[size][size]; // Initialize a size x size board
         this.currentPlayer = "GREEN"; // Green player starts the game
         this.gameStatus = "ONGOING";
         this.sosSequences = new ArrayList<>();
+        this.greenPlayerScore = 0;
+        this.redPlayerScore = 0;
         setGameMode(gameMode);
     }
 
@@ -44,6 +48,26 @@ public class Game {
         return gameStatus;
     }
 
+    public void setGameStatus(String gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public int getGreenPlayerScore() {
+        return greenPlayerScore;
+    }
+
+    public void incrementGreenPlayerScore(int score) {
+        greenPlayerScore += score;
+    }
+
+    public void incrementRedPlayerScore(int score) {
+        redPlayerScore += score;
+    }
+
+    public int getRedPlayerScore() {
+        return redPlayerScore;
+    }
+
     public List<SosSequence> getSosSequences() {
         return sosSequences;
     }
@@ -56,16 +80,15 @@ public class Game {
         return MIN_SIZE;
     }
 
-    public void makeMove(int row, int col, String letter) {
+    public boolean checkIfBoardIsFull() {
+        return isBoardFull();
+    }
+
+    public synchronized void makeMove(int row, int col, String letter) {
         if (board[row][col] == null && gameStatus.equals("ONGOING")) {
             board[row][col] = letter; // Set the chosen letter
-            List<SosSequence> newSequences = gameMode.findSosSequences(board, row, col);
-            if (!newSequences.isEmpty()) {
-                sosSequences.addAll(newSequences); // Add the new sequences to the list
-                gameStatus = "WON";
-            } else if (isBoardFull()) {
-                gameStatus = "DRAW";
-            } else {
+            gameMode.updateGameStatus(this, row, col, letter);
+            if (gameStatus.equals("ONGOING")) {
                 currentPlayer = currentPlayer.equals("GREEN") ? "RED" : "GREEN"; // Switch player
             }
         }

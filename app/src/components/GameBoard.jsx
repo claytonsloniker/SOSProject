@@ -24,7 +24,7 @@ const GameBoard = () => {
 
     useEffect(() => {
         drawLines(sosSequences);
-        if (gameStatus === 'WON' || gameStatus === 'DRAW') {
+        if (gameStatus === 'GREEN WON' || gameStatus === 'RED WON' || gameStatus === 'DRAW') {
             setShowModal(true);
         }
     }, [sosSequences, gameStatus]); // Draw the lines when sosSequences change
@@ -70,10 +70,7 @@ const GameBoard = () => {
     const fetchSosSequences = async () => {
         try {
             const response = await axios.get('/api/game/sos-sequences');
-            setSosSequences(response.data.map(seq => ({
-                ...seq,
-                color: getPlayerColor(currentPlayer)
-            })));
+            setSosSequences(response.data); // Use the color from the SosSequence objects
         } catch (error) {
             console.error('Error fetching SOS sequences:', error);
         }
@@ -91,16 +88,18 @@ const GameBoard = () => {
         }
     };
 
-    const drawLines = (sequences) => {
+    const drawLines = (sosSequences) => {
         const canvas = document.getElementById('sosCanvas');
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous lines
-        sequences.forEach(seq => {
-            ctx.strokeStyle = seq.color; // Set the color of the line to the current player's color
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+
+        sosSequences.forEach(sequence => {
+            const { startRow, startCol, endRow, endCol, color } = sequence;
+            ctx.strokeStyle = color;
             ctx.lineWidth = 5;
             ctx.beginPath();
-            ctx.moveTo(seq.startCol * 50 + 25, seq.startRow * 50 + 25); // Start from the center of the cell
-            ctx.lineTo(seq.endCol * 50 + 25, seq.endRow * 50 + 25); // End at the center of the cell
+            ctx.moveTo(startCol * 50 + 25, startRow * 50 + 25); // Start in the middle of the cell
+            ctx.lineTo(endCol * 50 + 25, endRow * 50 + 25); // End in the middle of the cell
             ctx.stroke();
         });
     };
@@ -224,9 +223,14 @@ const GameBoard = () => {
                 className="modal"
                 overlayClassName="modal-overlay"
             >
-                {gameStatus === 'WON' ? (
+                {gameStatus === 'GREEN WON' ? (
                     <>
-                        <h2>Player <span style={{color: getPlayerColor(currentPlayer)}}>{currentPlayer}</span> has won!</h2>
+                        <h2>Player <span style={{color: 'green'}}>GREEN</span> has won!</h2>
+                        <button className="modal-button play-again-button" onClick={handleStartGame}>Play Again</button>
+                    </>
+                ) : gameStatus === 'RED WON' ? (
+                    <>
+                        <h2>Player <span style={{color: 'red'}}>RED</span> has won!</h2>
                         <button className="modal-button play-again-button" onClick={handleStartGame}>Play Again</button>
                     </>
                 ) : gameStatus === 'DRAW' ? (
