@@ -78,4 +78,76 @@ public class GameTest {
         assertEquals("Letter 'S' should be placed at (0, 0)", "S", game.getBoard()[0][0]);
         assertEquals("Player 'RED' should be the current player", "RED", game.getCurrentPlayer());
     }
+
+    @Test
+    public void testSimpleGameDraw() {
+        Game game = new Game(3, "simple");
+        game.makeMove(0, 0, "S");
+        game.makeMove(0, 1, "S");
+        game.makeMove(0, 2, "S");
+        game.makeMove(1, 0, "S");
+        game.makeMove(1, 1, "S");
+        game.makeMove(1, 2, "S");
+        game.makeMove(2, 0, "S");
+        game.makeMove(2, 1, "S");
+        game.makeMove(2, 2, "S");
+        assertEquals("Game should be a draw", "DRAW", game.getGameStatus());
+    }
+
+    @Test
+    public void testSimpleGameWin() {
+        Game game = new Game(3, "simple");
+        game.makeMove(0, 0, "S");
+        game.makeMove(0, 1, "O");
+        game.makeMove(0, 2, "S");
+        assertEquals("Game should be won by 'GREEN'", "GREEN WON", game.getGameStatus());
+    }
+
+    @Test
+    public void testGeneralGameDraw() {
+        Game game = new Game(3, "general");
+        game.makeMove(0, 0, "S");
+        game.makeMove(0, 1, "O");
+        game.makeMove(0, 2, "S");
+        game.makeMove(1, 0, "S");
+        game.makeMove(1, 1, "O");
+        game.makeMove(1, 2, "S");
+        game.makeMove(2, 0, "O");
+        game.makeMove(2, 1, "S");
+        game.makeMove(2, 2, "O");
+        assertEquals("Game should be a draw", "DRAW", game.getGameStatus());
+    }
+
+    @Test
+    public void testGeneralGameWin() {
+        Game game = new Game(3, "general");
+        game.makeMove(0, 0, "S");
+        game.makeMove(0, 1, "O");
+        game.makeMove(0, 2, "S");
+        game.makeMove(1, 0, "S");
+        game.makeMove(1, 1, "O");
+        game.makeMove(1, 2, "S");
+        game.makeMove(2, 0, "S");
+        game.makeMove(2, 1, "O");
+        game.makeMove(2, 2, "S");
+        assertEquals("Game should be won by 'GREEN'", "GREEN WON", game.getGameStatus());
+    }
+
+    @Test
+    public void testScoring() {
+        Game game = new Game(3, "general");
+        game.makeMove(0, 0, "S");
+        game.makeMove(0, 1, "O");
+        game.makeMove(0, 2, "S");
+        assertEquals("Green player should have 1 point", 1, game.getGreenPlayerScore());
+    }
+
+    @Test
+    public void testBlockPlayer() {
+        Game game = new Game(3, "general");
+        game.makeMove(0, 0, "S");
+        game.makeMove(0, 2, "S");
+        game.makeMove(0, 1, "S");
+        assertEquals("Red player should have 0 point", 0, game.getRedPlayerScore());
+    }
 }
