@@ -1,27 +1,36 @@
 package com.sos.game;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
+    private static final Logger logger = LoggerFactory.getLogger(Game.class);
     private static final int MAX_SIZE = 10;
     private static final int MIN_SIZE = 3;
     private String[][] board;
-    private String currentPlayer; // "GREEN" or "RED"
+    private Player greenPlayer;
+    private Player redPlayer;
+    private Player currentPlayer;
     private String gameStatus; // "ONGOING", "WON", "DRAW"
     private GameMode gameMode;
     private final List<SosSequence> sosSequences;
     private int greenPlayerScore;
     private int redPlayerScore;
 
-    public Game(int size, String gameMode) {
+    public Game(int size, String gameMode, Player greenPlayer, Player redPlayer) {
         this.board = new String[size][size]; // Initialize a size x size board
-        this.currentPlayer = "GREEN"; // Green player starts the game
+        this.greenPlayer = greenPlayer;
+        this.redPlayer = redPlayer;
+        this.currentPlayer = greenPlayer; // Green player starts the game
         this.gameStatus = "ONGOING";
         this.sosSequences = new ArrayList<>();
         this.greenPlayerScore = 0;
         this.redPlayerScore = 0;
         setGameMode(gameMode);
+        logGameStartInfo();
     }
 
     private void setGameMode(String gameMode) {
@@ -32,12 +41,20 @@ public class Game {
         }
     }
 
+    private void logGameStartInfo() {
+        logger.info("Game started with size: {}", board.length);
+        logger.info("Game mode: {}", gameMode.getClass().getSimpleName());
+        logger.info("Green Player: {}", greenPlayer instanceof HumanPlayer ? "HumanPlayer" : "ComputerPlayer");
+        logger.info("Red Player: {}", redPlayer instanceof HumanPlayer ? "HumanPlayer" : "ComputerPlayer");
+        logger.info("Initial game status: {}", gameStatus);
+    }
+
     public String[][] getBoard() {
         return board;
     }
 
     public String getCurrentPlayer() {
-        return currentPlayer;
+        return currentPlayer.getColor();
     }
 
     public GameMode getGameMode() {
@@ -60,12 +77,12 @@ public class Game {
         greenPlayerScore += score;
     }
 
-    public void incrementRedPlayerScore(int score) {
-        redPlayerScore += score;
-    }
-
     public int getRedPlayerScore() {
         return redPlayerScore;
+    }
+
+    public void incrementRedPlayerScore(int score) {
+        redPlayerScore += score;
     }
 
     public List<SosSequence> getSosSequences() {
@@ -89,7 +106,10 @@ public class Game {
             board[row][col] = letter; // Set the chosen letter
             gameMode.updateGameStatus(this, row, col, letter);
             if (gameStatus.equals("ONGOING")) {
-                currentPlayer = currentPlayer.equals("GREEN") ? "RED" : "GREEN"; // Switch player
+                currentPlayer = currentPlayer.equals(greenPlayer) ? redPlayer : greenPlayer; // Switch player
+                if (currentPlayer instanceof ComputerPlayer) {
+                    currentPlayer.makeMove(this);
+                }
             }
         }
     }
@@ -107,7 +127,7 @@ public class Game {
 
     public void resetGame(int size) {
         this.board = new String[size][size];
-        this.currentPlayer = "GREEN";
+        this.currentPlayer = greenPlayer;
         this.gameStatus = "ONGOING";
         this.sosSequences.clear();
     }

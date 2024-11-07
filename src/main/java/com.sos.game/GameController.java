@@ -16,8 +16,8 @@ public class GameController {
     }
 
     @PostMapping("/create")
-    public void createGame(@RequestParam int size, @RequestParam String gameMode) {
-        gameService.createGame(size, gameMode);
+    public void createGame(@RequestParam int size, @RequestParam String gameMode, @RequestParam String greenPlayerType, @RequestParam String redPlayerType) {
+        gameService.createGame(size, gameMode, greenPlayerType, redPlayerType);
     }
 
     @GetMapping("/board")

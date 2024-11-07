@@ -15,10 +15,12 @@ const GameBoard = () => {
     const [gameStatus, setGameStatus] = useState('ONGOING'); // Game status
     const [sosSequences, setSosSequences] = useState([]); // Used to hold all the sos seq
     const [showModal, setShowModal] = useState(false); // State to control modal visibility
+    const [greenPlayerType, setGreenPlayerType] = useState('human'); // Green player type
+    const [redPlayerType, setRedPlayerType] = useState('human'); // Red player type
     const boardRef = useRef(null);
 
     useEffect(() => {
-        createGame(size, gameMode);
+        createGame(size, gameMode, greenPlayerType, redPlayerType);
         fetchGameStatus();
     }, []);
 
@@ -29,9 +31,9 @@ const GameBoard = () => {
         }
     }, [sosSequences, gameStatus]); // Draw the lines when sosSequences change
 
-    const createGame = async (size, gameMode) => {
+    const createGame = async (size, gameMode, greenPlayerType, redPlayerType) => {
         try {
-            await axios.post('/api/game/create', null, { params: { size, gameMode } });
+            await axios.post('/api/game/create', null, { params: { size, gameMode, greenPlayerType, redPlayerType } });
             await fetchBoard();
             await fetchCurrentPlayer();
             await fetchGameStatus();
@@ -127,7 +129,7 @@ const GameBoard = () => {
         const canvas = document.getElementById('sosCanvas');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-        createGame(newSize, gameMode);
+        createGame(newSize, gameMode, greenPlayerType, redPlayerType);
     };
 
     const getPlayerColor = (player) => {
@@ -173,28 +175,72 @@ const GameBoard = () => {
                     General Game
                 </label>
             </div>
-            <div className="board-wrapper" style={{ position: 'relative' }}>
-                <div className="board-container">
-                    <h2 className="current-player">
-                        Current Player: <span
-                        style={{color: getPlayerColor(currentPlayer)}}>{currentPlayer || 'Loading...'}</span>
-                    </h2>
-                    <div className="board" ref={boardRef} style={{gridTemplateColumns: `repeat(${size}, 50px)`}}>
-                        {board.map((row, rowIndex) => (
-                            row.map((cell, colIndex) => (
-                                <div
-                                    key={`${rowIndex}-${colIndex}`}
-                                    onClick={() => makeMove(rowIndex, colIndex)}
-                                    className="cell"
-                                    style={{ width: '50px', height: '50px' }}
-                                >
-                                    {cell}
-                                </div>
-                            ))
-                        ))}
+            <div className="player-info-container">
+                <div className="player-info">
+                    <h2>Green Player</h2>
+                    <label>
+                        <input
+                            type="radio"
+                            value="human"
+                            checked={greenPlayerType === 'human'}
+                            onChange={() => setGreenPlayerType('human')}
+                        />
+                        Human
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            value="computer"
+                            checked={greenPlayerType === 'computer'}
+                            onChange={() => setGreenPlayerType('computer')}
+                        />
+                        Computer
+                    </label>
+                </div>
+                <div className="board-wrapper" style={{ position: 'relative' }}>
+                    <div className="board-container">
+                        <h2 className="current-player">
+                            Current Player: <span
+                            style={{color: getPlayerColor(currentPlayer)}}>{currentPlayer || 'Loading...'}</span>
+                        </h2>
+                        <div className="board" ref={boardRef} style={{gridTemplateColumns: `repeat(${size}, 50px)`}}>
+                            {board.map((row, rowIndex) => (
+                                row.map((cell, colIndex) => (
+                                    <div
+                                        key={`${rowIndex}-${colIndex}`}
+                                        onClick={() => makeMove(rowIndex, colIndex)}
+                                        className="cell"
+                                        style={{ width: '50px', height: '50px' }}
+                                    >
+                                        {cell}
+                                    </div>
+                                ))
+                            ))}
+                        </div>
+                        <canvas id="sosCanvas" width={size * 50} height={size * 50}
+                                style={{ position: 'absolute', top: boardRef.current?.offsetTop, left: boardRef.current?.offsetLeft, pointerEvents: 'none' }}></canvas>
                     </div>
-                    <canvas id="sosCanvas" width={size * 50} height={size * 50}
-                            style={{ position: 'absolute', top: boardRef.current?.offsetTop, left: boardRef.current?.offsetLeft, pointerEvents: 'none' }}></canvas>
+                </div>
+                <div className="player-info">
+                    <h2>Red Player</h2>
+                    <label>
+                        <input
+                            type="radio"
+                            value="human"
+                            checked={redPlayerType === 'human'}
+                            onChange={() => setRedPlayerType('human')}
+                        />
+                        Human
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            value="computer"
+                            checked={redPlayerType === 'computer'}
+                            onChange={() => setRedPlayerType('computer')}
+                        />
+                        Computer
+                    </label>
                 </div>
             </div>
             <div className="letter-select-and-new-game">
