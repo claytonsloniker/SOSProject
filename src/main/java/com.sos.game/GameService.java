@@ -37,8 +37,16 @@ public class GameService {
         return game.getCurrentPlayer();
     }
 
+    public String getCurrentPlayerType() {
+        return game.getCurrentPlayerType();
+    }
+
     public void makeMove(int row, int col, String letter) {
         game.makeMove(row, col, letter);
+    }
+
+    public void makeMoveComputer() {
+        game.makeMoveComputer();
     }
 
     public String getGameStatus() {

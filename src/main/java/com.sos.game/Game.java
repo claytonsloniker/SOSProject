@@ -57,6 +57,10 @@ public class Game {
         return currentPlayer.getColor();
     }
 
+    public String getCurrentPlayerType() {
+        return currentPlayer instanceof HumanPlayer ? "human" : "computer";
+    }
+
     public GameMode getGameMode() {
         return gameMode;
     }
@@ -107,10 +111,13 @@ public class Game {
             gameMode.updateGameStatus(this, row, col, letter);
             if (gameStatus.equals("ONGOING")) {
                 currentPlayer = currentPlayer.equals(greenPlayer) ? redPlayer : greenPlayer; // Switch player
-                if (currentPlayer instanceof ComputerPlayer) {
-                    currentPlayer.makeMove(this);
-                }
             }
+        }
+    }
+
+    public void makeMoveComputer() {
+        if (currentPlayer instanceof ComputerPlayer) {
+            currentPlayer.makeMove(this);
         }
     }
 

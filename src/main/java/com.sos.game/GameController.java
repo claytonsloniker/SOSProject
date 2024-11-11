@@ -30,9 +30,19 @@ public class GameController {
         return gameService.getCurrentPlayer();
     }
 
+    @GetMapping("/player-type")
+    public String getCurrentPlayerType() {
+        return gameService.getCurrentPlayerType();
+    }
+
     @PostMapping("/move")
     public void makeMove(@RequestParam int row, @RequestParam int col, @RequestParam String letter) {
         gameService.makeMove(row, col, letter);
+    }
+
+    @PostMapping("/move-computer")
+    public void makeMoveComputer() {
+        gameService.makeMoveComputer();
     }
 
     @GetMapping("/status")

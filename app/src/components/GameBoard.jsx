@@ -8,6 +8,7 @@ Modal.setAppElement('#root'); // Bind modal to root element
 const GameBoard = () => {
     const [board, setBoard] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState('GREEN');
+    const [currentPlayerType, setCurrentPlayerType] = useState('human');
     const [size, setSize] = useState(4); // Default board size set to 4
     const [inputSize, setInputSize] = useState(4); // Input field for board size set to 4
     const [gameMode, setGameMode] = useState('simple'); // Default game mode
@@ -31,11 +32,18 @@ const GameBoard = () => {
         }
     }, [sosSequences, gameStatus]); // Draw the lines when sosSequences change
 
+    useEffect(() => {
+        if (currentPlayerType === 'computer') {
+            makeMoveComputer();
+        }
+    }, [currentPlayerType, currentPlayer]);
+
     const createGame = async (size, gameMode, greenPlayerType, redPlayerType) => {
         try {
             await axios.post('/api/game/create', null, { params: { size, gameMode, greenPlayerType, redPlayerType } });
             await fetchBoard();
             await fetchCurrentPlayer();
+            await fetchCurrentPlayerType();
             await fetchGameStatus();
         } catch (error) {
             console.error('Error creating game:', error);
@@ -57,6 +65,15 @@ const GameBoard = () => {
             setCurrentPlayer(response.data);
         } catch (error) {
             console.error('Error fetching current player:', error);
+        }
+    };
+
+    const fetchCurrentPlayerType = async () => {
+        try {
+            const response = await axios.get('/api/game/player-type');
+            setCurrentPlayerType(response.data);
+        } catch (error) {
+            console.error('Error fetching current player type:', error);
         }
     };
 
@@ -83,10 +100,24 @@ const GameBoard = () => {
             await axios.post('/api/game/move', null, { params: { row, col, letter: selectedLetter } });
             await fetchBoard();
             await fetchCurrentPlayer();
+            await fetchCurrentPlayerType();
             await fetchGameStatus();
             await fetchSosSequences();
         } catch (error) {
             console.error('Error making move:', error);
+        }
+    };
+
+    const makeMoveComputer = async () => {
+        try {
+            await axios.post('/api/game/move-computer');
+            await fetchBoard();
+            await fetchCurrentPlayer();
+            await fetchCurrentPlayerType();
+            await fetchGameStatus();
+            await fetchSosSequences();
+        } catch (error) {
+            console.error('Error making computer move:', error);
         }
     };
 
