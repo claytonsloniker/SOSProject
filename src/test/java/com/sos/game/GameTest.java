@@ -1,8 +1,8 @@
 package com.sos.game;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class GameTest {
 
@@ -44,9 +44,9 @@ public class GameTest {
         assertEquals("Game should be ongoing", "ONGOING", game.getGameStatus());
         assertEquals("Current player should be 'GREEN'", "GREEN", game.getCurrentPlayer());
         assertEquals("Game mode should be SimpleGameMode", SimpleGameMode.class, game.getGameMode().getClass());
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                assertEquals("All cells should be empty", null, board[i][j]);
+        for (String[] row : board) {
+            for (String column : row) {
+                assertNull("All cells should be empty", column);
             }
         }
     }
