@@ -7,6 +7,6 @@ public class HumanPlayer extends Player {
 
     @Override
     public void makeMove(Game game) {
-        // Human player makes a move
+        // Human player makes move through UI
     }
 }

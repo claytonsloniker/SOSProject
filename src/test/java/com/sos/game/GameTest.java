@@ -9,7 +9,9 @@ public class GameTest {
     @Test
     public void testBoardSize() {
         int size = 4;
-        Game game = new Game(size, "simple");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(size, "simple", greenPlayer, redPlayer);
         String[][] board = game.getBoard();
         assertEquals("Board should have " + size + " rows", size, board.length);
         assertEquals("Board should have " + size + " columns", size, board[0].length);
@@ -19,19 +21,25 @@ public class GameTest {
 
     @Test
     public void gameModeChoiceSimple() {
-        Game game = new Game(4, "simple");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(4, "simple", greenPlayer, redPlayer);
         assertEquals("Game mode should be SimpleGameMode", SimpleGameMode.class, game.getGameMode().getClass());
     }
 
     @Test
     public void gameModeChoiceGeneral() {
-        Game game = new Game(4, "general");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(4, "general", greenPlayer, redPlayer);
         assertEquals("Game mode should be GeneralGameMode", GeneralGameMode.class, game.getGameMode().getClass());
     }
 
     @Test
-    public void startNewGame()  {
-        Game game = new Game(4, "simple");
+    public void startNewGame() {
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(4, "simple", greenPlayer, redPlayer);
         String[][] board = game.getBoard();
         assertEquals("Game should be ongoing", "ONGOING", game.getGameStatus());
         assertEquals("Current player should be 'GREEN'", "GREEN", game.getCurrentPlayer());
@@ -45,7 +53,9 @@ public class GameTest {
 
     @Test
     public void testSimpleMoveS() {
-        Game game = new Game(3, "simple");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "simple", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         assertEquals("Letter 'S' should be placed at (0, 0)", "S", game.getBoard()[0][0]);
         assertEquals("Player 'RED' should be the current player", "RED", game.getCurrentPlayer());
@@ -53,7 +63,9 @@ public class GameTest {
 
     @Test
     public void testSimpleMoveO() {
-        Game game = new Game(3, "simple");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "simple", greenPlayer, redPlayer);
         game.makeMove(0, 0, "O");
         assertEquals("Letter 'O' should be placed at (0, 0)", "O", game.getBoard()[0][0]);
         assertEquals("Player 'RED' should be the current player", "RED", game.getCurrentPlayer());
@@ -61,7 +73,9 @@ public class GameTest {
 
     @Test
     public void testMoveInNonEmptyCell() {
-        Game game = new Game(3, "simple");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "simple", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         assertEquals("Letter 'S' should be placed at (0, 0)", "S", game.getBoard()[0][0]);
 
@@ -73,7 +87,9 @@ public class GameTest {
 
     @Test
     public void testGeneralMove() {
-        Game game = new Game(3, "general");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "general", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         assertEquals("Letter 'S' should be placed at (0, 0)", "S", game.getBoard()[0][0]);
         assertEquals("Player 'RED' should be the current player", "RED", game.getCurrentPlayer());
@@ -81,7 +97,9 @@ public class GameTest {
 
     @Test
     public void testSimpleGameDraw() {
-        Game game = new Game(3, "simple");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "simple", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         game.makeMove(0, 1, "S");
         game.makeMove(0, 2, "S");
@@ -96,7 +114,9 @@ public class GameTest {
 
     @Test
     public void testSimpleGameWin() {
-        Game game = new Game(3, "simple");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "simple", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         game.makeMove(0, 1, "O");
         game.makeMove(0, 2, "S");
@@ -105,7 +125,9 @@ public class GameTest {
 
     @Test
     public void testGeneralGameDraw() {
-        Game game = new Game(3, "general");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "general", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         game.makeMove(0, 1, "O");
         game.makeMove(0, 2, "S");
@@ -120,7 +142,9 @@ public class GameTest {
 
     @Test
     public void testGeneralGameWin() {
-        Game game = new Game(3, "general");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "general", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         game.makeMove(0, 1, "O");
         game.makeMove(0, 2, "S");
@@ -135,7 +159,9 @@ public class GameTest {
 
     @Test
     public void testScoring() {
-        Game game = new Game(3, "general");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "general", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         game.makeMove(0, 1, "O");
         game.makeMove(0, 2, "S");
@@ -144,10 +170,67 @@ public class GameTest {
 
     @Test
     public void testBlockPlayer() {
-        Game game = new Game(3, "general");
+        Player greenPlayer = new HumanPlayer("GREEN");
+        Player redPlayer = new HumanPlayer("RED");
+        Game game = new Game(3, "general", greenPlayer, redPlayer);
         game.makeMove(0, 0, "S");
         game.makeMove(0, 2, "S");
         game.makeMove(0, 1, "S");
         assertEquals("Red player should have 0 point", 0, game.getRedPlayerScore());
+    }
+
+    @Test
+    public void testHumanPlayer() {
+        GameService gameService = new GameService();
+        gameService.createGame(3, "simple", "human", "computer");
+        assertEquals("Current player should be 'GREEN'", "GREEN", gameService.getCurrentPlayer());
+        assertEquals("Current player type should be 'human'", "human", gameService.getCurrentPlayerType());
+    }
+
+    @Test
+    public void testComputerPlayer() {
+        GameService gameService = new GameService();
+        gameService.createGame(3, "simple", "computer", "human");
+        assertEquals("Current player should be 'GREEN'", "GREEN", gameService.getCurrentPlayer());
+        assertEquals("Current player type should be 'computer'", "computer", gameService.getCurrentPlayerType());
+    }
+
+    @Test
+    public void testRandomComputerMove() {
+        GameService gameService = new GameService();
+        gameService.createGame(3, "simple", "computer", "human");
+        gameService.makeMoveComputer();
+        String[][] board = gameService.getBoard();
+        boolean moveMade = false;
+        for (String[] row : board) {
+            for (String column : row) {
+                if (column != null) {
+                    moveMade = true;
+                    break;
+                }
+            }
+        }
+        assertTrue("Computer should make a random move", moveMade);
+    }
+
+    @Test
+    public void testCompleteSOSMove() {
+        GameService gameService = new GameService();
+        gameService.createGame(3, "simple", "computer", "human");
+        gameService.makeMove(0, 0, "S");
+        gameService.makeMove(0, 1, "O");
+        gameService.makeMoveComputer();
+
+        assertEquals("Game should be won by 'GREEN'", "GREEN WON", gameService.getGameStatus());
+    }
+
+    @Test
+    public void testComputerDelay() {
+        GameService gameService = new GameService();
+        gameService.createGame(3, "simple", "computer", "human");
+        long startTime = System.currentTimeMillis();
+        gameService.makeMoveComputer();
+        long endTime = System.currentTimeMillis();
+        assertTrue("Computer should wait at least 1 second before making a move", endTime - startTime >= 1000);
     }
 }
